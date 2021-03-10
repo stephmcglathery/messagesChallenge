@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.exception.ErrorInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +10,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,6 +26,7 @@ public class DemoControllerIntegrationTest {
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpEntity<String> httpEntity;
     HttpHeaders headers = new HttpHeaders();
+    ObjectMapper objectMapper = new ObjectMapper();
 
 
     @Test
@@ -36,6 +41,23 @@ public class DemoControllerIntegrationTest {
 
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
         assertNotNull(hash);
+    }
+
+    @Test
+    public void getMessageFromHash_notFound() throws IOException {
+
+        String hash = "foo";
+        String url = "/demo/messages/" + hash;
+
+        httpEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<String> actualResponse = restTemplate.exchange(
+                createURLWithPort(url),
+                HttpMethod.GET, httpEntity, String.class);
+
+        ErrorInfo errorInfo = objectMapper.readValue(actualResponse.getBody(), ErrorInfo.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, actualResponse.getStatusCode());
+        assertEquals(errorInfo.getErrorMessage(), "Message not found.");
     }
 
     @Test
