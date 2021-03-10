@@ -39,9 +39,8 @@ public class ExceptionProcessor {
     @ResponseBody
     public ErrorInfo emptyResultDataAccessException(HttpServletRequest request, Exception exception) {
 
-        String messageId = "error.global.invalidpath";
+        String messageId = "error.global.notFound";
         String exceptionMessage = exception.getMessage();
-        exception.printStackTrace();
         return generateErrorInfo(request, messageId, exceptionMessage);
     }
 
