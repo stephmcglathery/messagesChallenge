@@ -1,0 +1,1 @@
+INSERT INTO messages (message, hash) VALUES ('Message', '2f77668a9dfbf8d5848b9eeb4a7145ca94c6ed9236e4a773f6dcafa5132b2f91');
